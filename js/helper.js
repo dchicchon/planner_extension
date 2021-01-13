@@ -69,9 +69,8 @@ let addFunction = function () {
 
 let getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${
-    Math.floor(Math.random() * 98) + 1
-  }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
+    }`;
   return key;
 };
 
@@ -100,7 +99,7 @@ let addToStorage = function (listElm, date, text, key) {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
+      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
     }
   });
 };
@@ -156,6 +155,15 @@ let setEntries = function (date, elmList) {
 };
 
 // ENTRY FUNCTIONS
+
+class Entry {
+  constructor(entry, date) {
+    this.entry = entry;
+    this.date = date;
+  }
+
+}
+
 let entryFunctions = function (elmList, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
   for (let i = 0; i < entriesArr.length; i++) {
@@ -164,7 +172,7 @@ let entryFunctions = function (elmList, arr) {
 
     let editEntry = function () {
       let editButton = this; // declare 'this' for less confusion and consistency in all functions
-      // create input
+
       let input = document.createElement("input");
       input.className = "newItem";
       input.value = editButton.previousElementSibling.textContent;
@@ -190,12 +198,8 @@ let entryFunctions = function (elmList, arr) {
         textNode.textContent = newText;
 
         // Insert and remove input node
-        console.log(editButton);
-        console.log(editButton.parentNode);
-
         input.blur();
         editButton.parentNode.removeChild(input);
-
         editButton.parentNode.insertBefore(textNode, editButton);
 
         editButton.textContent = "Edit";
@@ -215,7 +219,7 @@ let entryFunctions = function (elmList, arr) {
       }
     };
 
-    let editColor = function () {};
+    let editColor = function () { };
 
     let deleteEntry = function () {
       let entryDate = entry.classList.item(1); // check the classList for new dates
@@ -354,7 +358,7 @@ let entryFunctions = function (elmList, arr) {
 // ENTRY DRAG
 let dragFunctions = function () {
   let dragged;
-  document.addEventListener("drag", function (event) {}, false);
+  document.addEventListener("drag", function (event) { }, false);
   document.addEventListener(
     "dragstart",
     function (event) {
