@@ -157,9 +157,9 @@ let setEntries = function (date, elmList) {
 // ENTRY FUNCTIONS
 
 class Entry {
-  constructor(entry, date) {
+  constructor(entry) {
     this.entry = entry;
-    this.date = date;
+    this.date = entry.classList[1];
   }
 
 }
@@ -167,12 +167,13 @@ class Entry {
 let entryFunctions = function (elmList, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
   for (let i = 0; i < entriesArr.length; i++) {
-    let entry = entriesArr[i];
+
+    // let entry = entriesArr[i];
+    let entry = new Entry(entriesArr[i])
     let date = entry.classList[1];
 
     let editEntry = function () {
       let editButton = this; // declare 'this' for less confusion and consistency in all functions
-
       let input = document.createElement("input");
       input.className = "newItem";
       input.value = editButton.previousElementSibling.textContent;
