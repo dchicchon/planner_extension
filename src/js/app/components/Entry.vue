@@ -1,6 +1,5 @@
 <template>
   <!-- New Entry -->
-  <!-- <transition name="fade" v-if="entry.text.length === 0"> -->
   <textarea
     v-model="newText"
     class="newEntry entry"
@@ -11,7 +10,6 @@
     v-on:keypress.enter="submitEntry(newText, entry.key)"
   >
   </textarea>
-  <!-- </transition> -->
   <!-- Not Active -->
   <li
     v-else-if="!active"
@@ -21,7 +19,6 @@
     draggable
     @dragstart="dragStart($event, entry, $parent._uid)"
   >
-    <!-- @dragend="dragEnd($event, entry.key)" -->
     {{ entry.text }}
   </li>
   <!-- Active -->
@@ -50,7 +47,11 @@
           @click="changeMode('color')"
           :class="[mode === 'color' ? 'activeBtn' : '', 'entryBtn']"
         >
-          <span class="material-icons md-21"> palette </span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/palette.png"
+            alt="color"
+          />
           <select
             style="cursor: pointer"
             :value="''"
@@ -73,7 +74,11 @@
           :class="[mode === 'time' ? 'activeBtn' : '', 'entryBtn']"
         >
           <!-- only activates clock on mouseup -->
-          <span class="material-icons md-21"> schedule </span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/clock.png"
+            alt="time"
+          />
           <input
             v-model="time"
             @blur="blur()"
@@ -89,18 +94,35 @@
           @click="submitEdit(newText, entry.key)"
           class="entryBtn"
         >
-          <span class="material-icons md-21"> save </span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/save.png"
+            alt="Edit"
+          />
         </button>
 
         <button v-if="mode !== 'edit'" @click="editEntry" class="entryBtn">
-          <span class="material-icons md-21">mode_edit</span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/edit.png"
+            alt="Edit"
+          />
         </button>
 
         <button @click="() => checkEntry(entry.key)" class="entryBtn">
-          <span class="material-icons md-21"> done </span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/done.png"
+            alt="	&#10004;"
+          />
+          <!-- <span class="material-icons md-21"> done </span> -->
         </button>
         <button @click="() => deleteEntry(entry.key)" class="entryBtn">
-          <span class="material-icons md-21"> delete </span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/delete.png"
+            alt="x"
+          />
         </button>
       </div>
     </div>
