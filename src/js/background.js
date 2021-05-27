@@ -23,6 +23,7 @@ chrome.runtime.onInstalled.addListener(() => {
   getPhoto();
 });
 
+
 chrome.runtime.setUninstallURL(
   "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit",
   () => { }

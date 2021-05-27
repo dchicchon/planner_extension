@@ -23,14 +23,23 @@
   "chrome_url_overrides": {
     "newtab": "html/index.html"
   },
- 
-  "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://www.google-analytics.com https://*.firebaseio.com https://www.googleapis.com https://apis.google.com; object-src 'self'",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1P+QOirmBclf+iOMc9u6SleY1HhFKEdtIPz+bu/zgJWtkDRGhUW4icEaNdOHimTtBLKnuW49p12t6clD38cP8eptmrjOd209NZWkbYD4o6CX1atch6v4yFHOCQKvkgQya4OqiQuFYl8QdwQFzL68dbnBKid4LG59RdcGa7gtBIvhOeoEdtAXFil39eCy5mkUngEazcB5Aycba71AJGJLab8DBCowbfalh6xYv3KaKvqEQIwXl6XncN1XUkrvXUuv2MJDp70266ReN3ArrzedAYAoZHBlWI/xwxtHaEa1uoSO9isp3wErYJmlmvdAd7MXqeh9nsNhQtB6B4x4tXaxOwIDAQAB",
+  "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
   "incognito": "not_allowed",
   "offline_enabled": true,
-  "optional_permissions":["notifications"],
+  "optional_permissions": [
+    "notifications"
+  ],
+  "oauth2": {
+    "client_id": "274422794820-42usjoqhn5sm4cfvngusc2089erhr8mh.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email"
+    ]
+  },
   "permissions": [
     "alarms",
     "contextMenus",
+    "identity",
     "storage"
   ],
   "short_name": "Polus"

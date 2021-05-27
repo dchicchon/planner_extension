@@ -6,11 +6,7 @@
       <div v-if="!userLoggedIn">
         <div v-if="page === 'signup'">
           <h3 class="signup-text">Join Polus</h3>
-          <button
-            @click="signUpWithGoogle()"
-            id="Auth:Google"
-            class="social-btn"
-          >
+          <button @click="signUpWithGoogle" id="Auth:Google" class="social-btn">
             <div style="display: inline-flex">
               <img />
               <div class="social-text">Continue with Google</div>
@@ -67,7 +63,7 @@
           <label for="password">Password</label>
           <input type="text" />
           <div class="social-signup-board">
-            <button>
+            <button @click="signUpWithGoogle">
               <span>Google</span>
             </button>
           </div>
@@ -84,28 +80,50 @@
         </div>
       </div>
 
-      <div v-if="userLoggedIn"></div>
+      <div v-if="userLoggedIn">
+        <h3 class="signup-text">Welcome User!</h3>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import auth from "firebase/auth";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
+var config = {
+  apiKey: "AIzaSyC-jyQX_JbQnJAjADK3ApS1gyemkr-AqW8",
+  authDomain: "polus-cc376.firebaseapp.com",
+  databaseURL: "https://polus-cc376.firebaseio.com",
+  projectId: "polus-cc376",
+  storageBucket: "polus-cc376.appspot.com",
+  messagingSenderId: "926662511983",
+  appId: "1:926662511983:web:dbb9499dfe95d22c116c9a",
+  measurementId: "G-VRXQZDBLBF",
+};
+firebase.initializeApp(config);
+
+// import auth from "firebase/auth";
 
 // Put this in the manifest to begin auth
-// "oauth2": {
-//   "client_id":"",
-//   "scopes": [
-//     ""
-//   ]
-// },
 
 export default {
   data() {
     return {
-      userLoggedIn: false,
+      user: "",
+      userLoggedIn: Boolean,
       page: "signup",
     };
+  },
+  beforeCreate() {
+    firebase.auth().onAuthStateChanged((user) => {
+      console.log(user);
+      if (user) {
+        this.userLoggedIn = true;
+      } else {
+        this.userLoggedIn = false;
+      }
+    });
   },
   created() {
     // Check if user is logged in
@@ -113,14 +131,17 @@ export default {
   },
   methods: {
     signUpWithGoogle() {
-      console.log("Sign up with google");
-      var config = {
-        apiKey: "AIzaSyC-jyQX_JbQnJAjADK3ApS1gyemkr-AqW8",
-        authDomain: "polus-cc376.firebaseapp.com",
-        databaseURL: "https://polus-cc376.firebaseio.com",
-        storageBucket: "polus-cc376.appspot.com",
-      };
-      firebase.initializeApp(config);
+      chrome.identity.getAuthToken({ interactive: true }, (token) => {
+        console.log("Auth Token");
+        console.log(token);
+
+        let credential = firebase.auth.GoogleAuthProvider.credential(
+          null,
+          token
+        );
+        firebase.auth().signInWithCredential(credential);
+      });
+
       function startAuth(interactive) {
         chrome.identity.getAuthToken({ interactive: true }, function (token) {
           if (chrome.runtime.lastError && !interactive) {
@@ -151,7 +172,7 @@ export default {
           }
         });
       }
-      startAuth(true);
+      // startAuth(true);
     },
   },
 };

@@ -10,17 +10,6 @@ $day-background: rgba(0, 0, 0, 0.15);
 
 // HTML ELEMENT STYLING
 // ===================
-.material-icons {
-  &.md-18 {
-    font-size: 18px;
-  }
-  &.md-21 {
-    font-size: 21px;
-  }
-  &.invert {
-    background: rgb(56 147 200 / 75%);
-  }
-}
 
 html {
   background: black;
@@ -309,18 +298,12 @@ button:hover {
         }
       }
     }
-    .weekDate {
-    }
 
     @media (max-width: 760px) {
       .weekdayNames {
         font-size: 0.75rem;
       }
     }
-  }
-
-  .weekday:hover {
-    // transform: translateY(-1.5%);
   }
 }
 

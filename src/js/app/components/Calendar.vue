@@ -11,21 +11,9 @@
         Month
       </button>
     </div>
-    <div v-if="userSettings.view === 'daily'">
-      <section>
-        <Day />
-      </section>
-    </div>
-    <div v-if="userSettings.view === 'week'">
-      <section>
-        <Week />
-      </section>
-    </div>
-    <div v-if="userSettings.view === 'month'">
-      <section>
-        <Month />
-      </section>
-    </div>
+    <section>
+      <component :is="currentComponent"></component>
+    </section>
   </div>
 </template>
 
@@ -43,21 +31,37 @@ export default {
   },
   data() {
     return {
+      currentComponent: "",
       userSettings: {},
-     };
+    };
   },
 
   created() {
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
       this.userSettings = userSettings;
+      this.switchComponent();
     });
   },
 
   methods: {
+    switchComponent() {
+      switch (this.userSettings.view) {
+        case "daily":
+          this.currentComponent = Day;
+          break;
+        case "week":
+          this.currentComponent = Week;
+          break;
+        case "month":
+          this.currentComponent = Month;
+          break;
+      }
+    },
     changeView(type) {
       this.userSettings.view = type;
       let userSettings = this.userSettings;
+      this.switchComponent();
       chrome.storage.sync.set({ userSettings });
     },
   },
