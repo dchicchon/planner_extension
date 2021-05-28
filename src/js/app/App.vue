@@ -20,8 +20,14 @@ export default {
     Calendar,
   },
 
+  data() {
+    return {
+      firebase: Boolean, // pass this to all its child elements to confirm that a user is logged in
+    };
+  },
+
   created() {
-    // This is where I should check if I have it set as default new tab or not
+    // Check if a user is logged in
     this.setBackground();
   },
 

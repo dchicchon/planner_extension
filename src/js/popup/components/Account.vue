@@ -79,9 +79,10 @@
           </div>
         </div>
       </div>
-
       <div v-if="userLoggedIn">
         <h3 class="signup-text">Welcome User!</h3>
+        <button @click="signOut">Logout</button>
+        <button @click="testFirestore">Add to firestore</button>
       </div>
     </div>
   </div>
@@ -91,6 +92,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+
 var config = {
   apiKey: "AIzaSyC-jyQX_JbQnJAjADK3ApS1gyemkr-AqW8",
   authDomain: "polus-cc376.firebaseapp.com",
@@ -103,25 +105,21 @@ var config = {
 };
 firebase.initializeApp(config);
 
-// import auth from "firebase/auth";
-
-// Put this in the manifest to begin auth
-
 export default {
   data() {
     return {
       user: "",
       userLoggedIn: Boolean,
-      page: "signup",
+      page: "",
     };
   },
   beforeCreate() {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log(user);
       if (user) {
         this.userLoggedIn = true;
       } else {
         this.userLoggedIn = false;
+        this.page = "login";
       }
     });
   },
@@ -132,47 +130,100 @@ export default {
   methods: {
     signUpWithGoogle() {
       chrome.identity.getAuthToken({ interactive: true }, (token) => {
-        console.log("Auth Token");
-        console.log(token);
-
         let credential = firebase.auth.GoogleAuthProvider.credential(
           null,
           token
         );
-        firebase.auth().signInWithCredential(credential);
-      });
-
-      function startAuth(interactive) {
-        chrome.identity.getAuthToken({ interactive: true }, function (token) {
-          if (chrome.runtime.lastError && !interactive) {
-            console.log("Unable to get token programmatically");
-          } else if (chrome.runtime.lastError) {
-            console.log("Chrome error?");
-            console.error(chrome.runtime.lastError);
-          } else if (token) {
-            let credential = firebase.auth.GoogleAuthProvider.credential(
-              null,
-              token
-            );
-            firebase
-              .auth()
-              .signInWithCredential(credential)
-              .catch(function (error) {
-                if (error.code === "auth/invalid-credential") {
-                  chrome.identity.removeCachedAuthToken(
-                    { token: token },
-                    function () {
-                      startAuth(interactive);
-                    }
-                  );
+        firebase
+          .auth()
+          .signInWithCredential(credential)
+          .then((result) => {
+            // lets check if they are in the database already
+            let { uid } = result.user;
+            let db = firebase.firestore();
+            let userRef = db.collection("users").doc(uid);
+            userRef
+              .get()
+              .then((doc) => {
+                if (doc.exists) {
+                  console.log("User is in database");
+                } else {
+                  console.log("User not in database");
+                  console.log("MIGRATRING...");
+                  // Get all data from chrome storage sync and add it to firebase
+                  chrome.storage.sync.get(null, (result) => {
+                    userRef
+                      .set(result)
+                      .then((result) => {
+                        console.log("Document successfully written");
+                        console.log(result);
+                      })
+                      .catch((error) => {
+                        console.error("Error in writting document:", error);
+                      });
+                  });
                 }
+              })
+              .catch((error) => {
+                console.error("Error in getting document:", error);
               });
-          } else {
-            console.error("The oAuth Token was null");
-          }
+          })
+          .catch((error) => {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            if (errorCode === "auth/account-exists-with-different-credential") {
+              alert("Email already associated with another account.");
+              // Handle account linking here, if using.
+            } else {
+              console.error(error);
+            }
+          });
+      });
+    },
+
+    signOut() {
+      firebase.auth().signOut();
+    },
+
+    // This occurs when a user SignsUp for the first time and decides to migrate their data
+    migrateData() {},
+
+    // testing adding data and getting d ata
+    testFirestore() {
+      let db = firebase.firestore();
+
+      // Getting Data
+      // db.collection("entries")
+      //   .add({
+      //     text: "Hello World",
+      //     key: "1230jdvfois",
+      //     active: true,
+      //     color: "blue",
+      //   })
+      //   .then((docRef) => {
+      //     console.log("Document written with ID:", docRef.id);
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error adding document:", error);
+      //   });
+
+      // Reading Data
+      db.collection("entries")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            console.log(doc.id);
+            console.log(doc.data());
+          });
+        })
+        .catch((error) => {
+          console.error("Error getting documents:", error);
         });
-      }
-      // startAuth(true);
     },
   },
 };
