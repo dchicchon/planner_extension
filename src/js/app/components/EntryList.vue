@@ -125,6 +125,7 @@ export default {
     getEntries() {
       let dateStamp = this.listDate.toLocaleDateString();
       // Check if user is logged in
+      console.log("Get Entries");
       this.$firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           let db = this.$firebase.firestore();

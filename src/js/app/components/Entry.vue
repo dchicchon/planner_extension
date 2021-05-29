@@ -427,6 +427,7 @@ select option {
   border: none;
   touch-action: none;
   user-select: none;
+  animation: 0.5s fadeIn forwards;
   // transition: background 0.5s, height 0.25s;
   transition: background 0.5s;
   color: white;
