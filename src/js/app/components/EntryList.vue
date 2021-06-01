@@ -115,6 +115,8 @@ export default {
       // We need a callback so we can remove from the original data and entries list
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
+
+      evt.dataTransfer.setData("text/plain", JSON.stringify(entry))
       evt.dataTransfer.setData("key", entry.key);
       evt.dataTransfer.setData("complete", entry.active);
       evt.dataTransfer.setData("entry", entry.text);
