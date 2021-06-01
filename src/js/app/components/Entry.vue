@@ -77,7 +77,7 @@
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/clock.png"
-            alt="time"
+            alt="clock"
           />
           <input
             v-model="time"
@@ -97,7 +97,7 @@
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/save.png"
-            alt="Edit"
+            alt="save"
           />
         </button>
 
@@ -105,7 +105,7 @@
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/edit.png"
-            alt="Edit"
+            alt="edit"
           />
         </button>
 
@@ -182,17 +182,6 @@ export default {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
   },
   methods: {
-    makeNotification() {
-      chrome.notifications.clear("test");
-      chrome.notifications.create("test", {
-        message: "hello",
-        type: "basic",
-        title: "Polus",
-        iconUrl: "/assets/polus_icon.png",
-      });
-      // chrome.notifications.onClosed.addListener();
-    },
-
     altChangeActive(e) {
       if (
         e.target.classList.contains("text") ||

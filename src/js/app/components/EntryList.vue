@@ -116,11 +116,8 @@ export default {
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
 
-      evt.dataTransfer.setData("text/plain", JSON.stringify(entry))
-      evt.dataTransfer.setData("key", entry.key);
-      evt.dataTransfer.setData("complete", entry.active);
-      evt.dataTransfer.setData("entry", entry.text);
-      evt.dataTransfer.setData("color", entry.color);
+      // https://stackoverflow.com/questions/9533585/drag-drop-html-5-jquery-e-datatransfer-setdata-with-json
+      evt.dataTransfer.setData("text/plain", JSON.stringify(entry));
       evt.dataTransfer.setData("parentId", parentId);
     },
 
@@ -161,16 +158,8 @@ export default {
       if (parentId === this._uid) return;
 
       // Else, lets grab the data from datatransfer
-      const key = evt.dataTransfer.getData("key");
-      const color = evt.dataTransfer.getData("color");
-      const active = JSON.parse(evt.dataTransfer.getData("complete"));
-      const text = evt.dataTransfer.getData("entry");
-      const entry = {
-        key,
-        color,
-        text,
-        active,
-      };
+      const entryJSON = evt.dataTransfer.getData("text/plain");
+      const entry = JSON.parse(entryJSON);
 
       // find the original parent component by reference of this parent
       let originalParent = this.$parent.$children.filter(
@@ -178,7 +167,7 @@ export default {
       )[0];
 
       // Call the original parent function deleteEntry and pass in the key
-      originalParent.deleteEntry(key);
+      originalParent.deleteEntry(entry.key);
 
       // Add to our new list
       this.entries.push(entry); // might change it back to push later, unsure
