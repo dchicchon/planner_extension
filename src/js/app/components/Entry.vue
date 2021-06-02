@@ -467,8 +467,7 @@ select option {
   // margin-block-start: 1em;
   // margin-block-end: 1em;
   float: left;
-
-  animation-name: "grow";
+  animation-name: grow;
   animation-fill-mode: forwards;
   animation-duration: 0.25s;
 
