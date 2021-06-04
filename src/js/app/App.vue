@@ -55,13 +55,14 @@ export default {
     },
 
     checkLogin() {
-      this.$firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          this.$signedIn = true;
-        } else {
-          this.$signedIn = false;
-        }
-      });
+      // console.log("Checking Firebase Login");
+      // this.$firebase.auth().onAuthStateChanged((user) => {
+      //   if (user) {
+      //     this.$auth.signedIn = true;
+      //   } else {
+      //     this.$auth.signedIn = false;
+      //   }
+      // });
     },
   },
 };

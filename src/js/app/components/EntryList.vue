@@ -126,17 +126,25 @@ export default {
     getEntries() {
       let dateStamp = this.listDate.toLocaleDateString();
       // Check if user is logged in
-      console.log("Get Entries");
-      console.log(this.$signedIn);
-      if (this.$signedIn) {
+      let user = this.$signedIn();
+      if (user) {
         console.log("User Logged In");
         let db = this.$firebase.firestore();
-        let userRef = db.collection("users").doc(user.uid);
-        userRef.get().then((doc) => {
-          console.log(doc.data()); // this returns an object, like result
-          let result = doc.data();
-          this.entries = result[dateStamp];
-        });
+        let userRef = db.collection("users").doc(user.uid); // get user from authstatechanged
+
+        userRef
+          .get()
+          .then((doc) => {
+            let result = doc.data();
+            if (result) {
+              this.entries = result[dateStamp];
+            } else {
+              this.entries = [];
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
       } else {
         console.log("User not logged in"); // use chrome storage.sync instead
         chrome.storage.sync.get([dateStamp], (result) => {
