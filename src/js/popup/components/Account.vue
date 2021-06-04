@@ -129,7 +129,9 @@ export default {
   },
   methods: {
     signUpWithGoogle() {
+      console.log("GET TOKEN");
       chrome.identity.getAuthToken({ interactive: true }, (token) => {
+        console.log(token);
         let credential = firebase.auth.GoogleAuthProvider.credential(
           null,
           token
@@ -187,6 +189,7 @@ export default {
     },
 
     signOut() {
+      console.log("Sign out");
       firebase.auth().signOut();
     },
 

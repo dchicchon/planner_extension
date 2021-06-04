@@ -28,6 +28,7 @@ export default {
 
   created() {
     // Check if a user is logged in
+    this.checkLogin();
     this.setBackground();
   },
 
@@ -53,7 +54,15 @@ export default {
       });
     },
 
-    // checkLogin() {},
+    checkLogin() {
+      this.$firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          this.$signedIn = true;
+        } else {
+          this.$signedIn = false;
+        }
+      });
+    },
   },
 };
 </script>

@@ -5,7 +5,8 @@ import "firebase/auth";
 import "firebase/firestore"
 
 Vue.prototype.$firebase = firebase
-// Vue.prototype.$signedIn = false
+Vue.prototype.$signedIn = false
+
 function updateStorageVersion() {
     let userSettings = {
         changePhoto: true,
