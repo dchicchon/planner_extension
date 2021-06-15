@@ -12,6 +12,7 @@
 import Navbar from "./components/Navbar.vue";
 import Clock from "./components/Clock.vue";
 import Calendar from "./components/Calendar.vue";
+import { store, mutations } from "./utils/store";
 
 export default {
   components: {
@@ -20,15 +21,15 @@ export default {
     Calendar,
   },
 
-  data() {
-    return {
-      firebase: Boolean, // pass this to all its child elements to confirm that a user is logged in
-    };
-  },
-
   created() {
     // Check if a user is logged in
-    this.checkLogin();
+    this.$firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        mutations.setSignedIn(true);
+      } else {
+        mutations.setSignedIn(false);
+      }
+    });
     this.setBackground();
   },
 
@@ -52,17 +53,6 @@ export default {
           ? "none"
           : "block";
       });
-    },
-
-    checkLogin() {
-      // console.log("Checking Firebase Login");
-      // this.$firebase.auth().onAuthStateChanged((user) => {
-      //   if (user) {
-      //     this.$auth.signedIn = true;
-      //   } else {
-      //     this.$auth.signedIn = false;
-      //   }
-      // });
     },
   },
 };

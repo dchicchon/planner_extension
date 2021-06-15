@@ -7,15 +7,6 @@ import "firebase/firestore";
 Vue.prototype.$firebase = firebase;
 
 // This function returns the user if it exists. Else returns false
-Vue.prototype.$signedIn = async function () {
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      return user;
-    } else {
-      return false;
-    }
-  });
-};
 
 function updateStorageVersion() {
   let userSettings = {
@@ -72,5 +63,11 @@ window.onload = () => {
     measurementId: "G-VRXQZDBLBF",
   };
   firebase.initializeApp(config);
+  // If we do this, it takes longer to load! Maybe consider using a promise based thing
+
+  // firebase.auth().onAuthStateChanged((user) => {
+  // $auth.signedIn = user;
+  // Vue.prototype.$auth = Vue.observable({ signedIn: user });
   checkOptions();
+  // });
 };

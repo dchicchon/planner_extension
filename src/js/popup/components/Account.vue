@@ -199,7 +199,6 @@ export default {
     // testing adding data and getting d ata
     testFirestore() {
       let db = firebase.firestore();
-
       // Getting Data
       // db.collection("entries")
       //   .add({

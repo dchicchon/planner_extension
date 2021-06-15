@@ -17,7 +17,6 @@
   </div>
 </template>
 
-
 <script>
 import Day from "./Day";
 import Week from "./Week";
@@ -68,5 +67,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

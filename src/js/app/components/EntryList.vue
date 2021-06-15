@@ -11,6 +11,7 @@
       {{ dayNumber }}
     </div>
     <ul ref="entryList" class="entryList">
+      <div v-if="entries === false">Loading</div>
       <Entry
         v-for="(entry, index) in entries"
         :deleteEntry="deleteEntry"
@@ -31,6 +32,7 @@
 <script>
 import Entry from "./Entry";
 import shortId from "shortid"; // unique ids that dont add too much space
+import { store } from "../utils/store";
 
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
 export default {
@@ -54,19 +56,31 @@ export default {
   },
   data() {
     return {
-      entries: [],
+      entries: false,
       isOver: false,
+      signedIn: false,
     };
   },
+
+  beforeCreate() {},
   created() {
     // We do this to get the entries for the date
-    this.getEntries();
+    this.getEntries(); // We want to get current user state then grab entries somehow
   },
 
   watch: {
     // do this if we change the date
     listDate(newValue) {
       this.getEntries();
+    },
+
+    isSignedIn(newVal, oldVal) {
+      if (newVal) {
+        this.getEntries();
+        console.log("NEW VAL:", newVal);
+      } else {
+        console.log("OLD VAL:", oldVal);
+      }
     },
   },
 
@@ -124,19 +138,23 @@ export default {
     },
 
     getEntries() {
+      this.signedIn = store.signedIn;
       let dateStamp = this.listDate.toLocaleDateString();
-      // Check if user is logged in
-      let user = this.$signedIn();
-      if (user) {
+      if (store.signedIn) {
         console.log("User Logged In");
         let db = this.$firebase.firestore();
-        let userRef = db.collection("users").doc(user.uid); // get user from authstatechanged
+        // Need to get user id somehow
+        let user = this.$firebase.auth().currentUser;
+        console.log("USER");
+        console.log(user);
 
+        let userRef = db.collection("users").doc(user.uid); // get user from authstatechanged
         userRef
           .get()
           .then((doc) => {
             let result = doc.data();
-            if (result) {
+            console.log(result);
+            if (result.hasOwnProperty(dateStamp)) {
               this.entries = result[dateStamp];
             } else {
               this.entries = [];
@@ -155,6 +173,37 @@ export default {
           }
         });
       }
+      // THIS WORKS, BUT TRYING TO OPTIMIZE
+      // this.$firebase.auth().onAuthStateChanged((user) => {
+      //   if (user) {
+      //     console.log("User Logged In");
+      //     let db = this.$firebase.firestore();
+      //     let userRef = db.collection("users").doc(user.uid); // get user from authstatechanged
+      //     userRef
+      //       .get()
+      //       .then((doc) => {
+      //         let result = doc.data();
+      //         console.log(result);
+      //         if (result.hasOwnProperty(dateStamp)) {
+      //           this.entries = result[dateStamp];
+      //         } else {
+      //           this.entries = [];
+      //         }
+      //       })
+      //       .catch((err) => {
+      //         console.error(err);
+      //       });
+      //   } else {
+      //     console.log("User not logged in"); // use chrome storage.sync instead
+      //     chrome.storage.sync.get([dateStamp], (result) => {
+      //       if (Object.keys(result).length > 0) {
+      //         this.entries = result[dateStamp];
+      //       } else {
+      //         this.entries = [];
+      //       }
+      //     });
+      //   }
+      // });
     },
 
     // On drop, we will add to our list and delete from old one
@@ -213,6 +262,9 @@ export default {
     },
     dayNumber() {
       return this.listDate.getDate();
+    },
+    isSignedIn() {
+      return store.signedIn;
     },
     todayDate() {
       if (
