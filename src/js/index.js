@@ -63,6 +63,14 @@ window.onload = () => {
     measurementId: "G-VRXQZDBLBF",
   };
   firebase.initializeApp(config);
+  
+  // https://firebase.google.com/docs/firestore/manage-data/enable-offline
+  // FIGURE THIS OUT LATER == offline persisentce does not work if more than one tab
+  // firebase.firestore().enablePersistence().catch(err => {
+  //   if (err.code == 'failed-precondition') {
+
+  //   }
+  // });
   // If we do this, it takes longer to load! Maybe consider using a promise based thing
 
   // firebase.auth().onAuthStateChanged((user) => {

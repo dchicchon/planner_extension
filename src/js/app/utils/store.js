@@ -5,10 +5,14 @@ import Vue from "vue";
 
 export const store = Vue.observable({
   signedIn: false,
+  userData: {},
 });
 
 export const mutations = {
   setSignedIn(bool) {
     store.signedIn = bool;
+  },
+  setUserData(document) {
+    store.userData = document;
   },
 };

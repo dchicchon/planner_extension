@@ -58,7 +58,6 @@ export default {
     return {
       entries: false,
       isOver: false,
-      signedIn: false,
     };
   },
 
@@ -138,72 +137,26 @@ export default {
     },
 
     getEntries() {
-      this.signedIn = store.signedIn;
       let dateStamp = this.listDate.toLocaleDateString();
       if (store.signedIn) {
         console.log("User Logged In");
-        let db = this.$firebase.firestore();
-        // Need to get user id somehow
-        let user = this.$firebase.auth().currentUser;
-        console.log("USER");
-        console.log(user);
-
-        let userRef = db.collection("users").doc(user.uid); // get user from authstatechanged
-        userRef
-          .get()
-          .then((doc) => {
-            let result = doc.data();
-            console.log(result);
-            if (result.hasOwnProperty(dateStamp)) {
-              this.entries = result[dateStamp];
-            } else {
-              this.entries = [];
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+        let db = store.userData;
+        console.log(db);
+        if (db.hasOwnProperty(dateStamp)) {
+          this.entries = db[dateStamp];
+        } else {
+          this.entries = [];
+        }
       } else {
         console.log("User not logged in"); // use chrome storage.sync instead
         chrome.storage.sync.get([dateStamp], (result) => {
-          if (Object.keys(result).length > 0) {
+          if (result.hasOwnProperty(dateStamp)) {
             this.entries = result[dateStamp];
           } else {
             this.entries = [];
           }
         });
       }
-      // THIS WORKS, BUT TRYING TO OPTIMIZE
-      // this.$firebase.auth().onAuthStateChanged((user) => {
-      //   if (user) {
-      //     console.log("User Logged In");
-      //     let db = this.$firebase.firestore();
-      //     let userRef = db.collection("users").doc(user.uid); // get user from authstatechanged
-      //     userRef
-      //       .get()
-      //       .then((doc) => {
-      //         let result = doc.data();
-      //         console.log(result);
-      //         if (result.hasOwnProperty(dateStamp)) {
-      //           this.entries = result[dateStamp];
-      //         } else {
-      //           this.entries = [];
-      //         }
-      //       })
-      //       .catch((err) => {
-      //         console.error(err);
-      //       });
-      //   } else {
-      //     console.log("User not logged in"); // use chrome storage.sync instead
-      //     chrome.storage.sync.get([dateStamp], (result) => {
-      //       if (Object.keys(result).length > 0) {
-      //         this.entries = result[dateStamp];
-      //       } else {
-      //         this.entries = [];
-      //       }
-      //     });
-      //   }
-      // });
     },
 
     // On drop, we will add to our list and delete from old one
@@ -247,12 +200,40 @@ export default {
       }
     },
 
+    updateFirestore(dateStamp) {
+      let db = this.$firebase.firestore();
+      let user = this.$firebase.auth().currentUser;
+      db.collection("users")
+        .doc(user.uid)
+        .set(store.userData)
+        .then((result) => {
+          console.log("Successful update to firestore");
+        })
+        .catch((error) => {
+          console.error("Update did not work");
+        });
+    },
+
     updateStorage() {
-      let currentDate = this.listDate.toLocaleDateString();
+      console.log("Updating Storage");
+      let dateStamp = this.listDate.toLocaleDateString();
       if (this.entries.length > 0) {
-        chrome.storage.sync.set({ [currentDate]: this.entries });
+        if (store.signedIn) {
+          let db = store.userData;
+          db[dateStamp] = this.entries;
+          console.log(db);
+          this.updateFirestore();
+        } else {
+          chrome.storage.sync.set({ [dateStamp]: this.entries });
+        }
       } else {
-        chrome.storage.sync.remove([currentDate]); // remove from storage if there are no entries for this date
+        if (store.signedIn) {
+          let db = store.userData;
+          delete db[dateStamp];
+          // Remove datestamp from firestore
+        } else {
+          chrome.storage.sync.remove([dateStamp]); // remove from storage if there are no entries for this date
+        }
       }
     },
   },

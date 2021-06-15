@@ -25,7 +25,14 @@ export default {
     // Check if a user is logged in
     this.$firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        mutations.setSignedIn(true);
+        let db = this.$firebase.firestore();
+        db.collection("users")
+          .doc(user.uid)
+          .get()
+          .then((result) => {
+            mutations.setUserData(result.data());
+            mutations.setSignedIn(true);
+          });
       } else {
         mutations.setSignedIn(false);
       }
