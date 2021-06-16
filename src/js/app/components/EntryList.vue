@@ -200,7 +200,7 @@ export default {
       }
     },
 
-    updateFirestore(dateStamp) {
+    updateFirestore() {
       let db = this.$firebase.firestore();
       let user = this.$firebase.auth().currentUser;
       db.collection("users")
@@ -221,7 +221,6 @@ export default {
         if (store.signedIn) {
           let db = store.userData;
           db[dateStamp] = this.entries;
-          console.log(db);
           this.updateFirestore();
         } else {
           chrome.storage.sync.set({ [dateStamp]: this.entries });
@@ -230,6 +229,7 @@ export default {
         if (store.signedIn) {
           let db = store.userData;
           delete db[dateStamp];
+          this.updateFirestore();
           // Remove datestamp from firestore
         } else {
           chrome.storage.sync.remove([dateStamp]); // remove from storage if there are no entries for this date
