@@ -76,9 +76,8 @@ export default {
     isSignedIn(newVal, oldVal) {
       if (newVal) {
         this.getEntries();
-        console.log("NEW VAL:", newVal);
       } else {
-        console.log("OLD VAL:", oldVal);
+        this.getEntries();
       }
     },
   },
